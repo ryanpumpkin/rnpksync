@@ -1,20 +1,18 @@
-# Use an official Node.js runtime as the base image
 FROM node:14
 
-# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
 
-# Expose the port the app runs on
+ENV DATA_DIR=/data
+VOLUME ["/data"]
+
 EXPOSE 3000
 
-# Define the command to run the app
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/healthz', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+
 CMD ["node", "index.js"]

@@ -6,6 +6,12 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - DATA_DIR=/data
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
+      - rnpksync-data:/data
+    restart: unless-stopped
+
+volumes:
+  rnpksync-data:
